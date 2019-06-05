@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="maven_java19_shopping:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="maven_java19_shopping.war">
+      <element id="artifact" artifact-name="maven_java19_shopping:war exploded" />
+    </root>
+  </artifact>
+</component>

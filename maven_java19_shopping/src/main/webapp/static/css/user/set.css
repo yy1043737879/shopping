@@ -1,0 +1,13 @@
+.panel-body img{
+				width: 80px;
+				height: 80px;
+			}
+			.pro_name{
+				margin-left: 5px;
+				width: 200px;
+			}
+			.pro_price{
+				margin:0 50px;
+			}
+			th,td{text-align: center;}
+			

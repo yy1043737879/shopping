@@ -1,0 +1,10 @@
+$(function(){
+				$('.size').click(function(){
+					$('.size').removeClass('size_active');
+					$(this).toggleClass('size_active');
+				})
+				$('.color').click(function(){
+					$('.color').removeClass('color_active');
+					$(this).toggleClass('color_active');
+				})
+			})

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.mapper.StoreMapper">
+	<insert id="storeReg" parameterType="Store">
+		insert into store(storename,userid,info,storecover,buildtime)
+		values (#{storename},#{userid},#{info},#{storecover},#{buildtime})
+	</insert>
+	<select id="getPersonalStore" parameterType="int" resultType="Store">
+		select * 
+		from store
+		where userid = #{value}
+	</select>
+	<select id="getStoreInfoById" parameterType="int" resultType="Store">
+		select *
+		from store
+		where id = #{value}
+	</select>
+	<select id="getProductList" parameterType="int" resultType="Map">
+		select proname,pt.proid proid,storeid,cover,newprice,oldprice,status
+		from product pt
+		join prostandard pd
+		on pt.proid=pd.proid
+		where storeid=#{storeid}
+
+	</select>
+	<update id="shopGrounding" parameterType="String">
+		update product set status='salling' where proid=#{proid}
+	</update>
+	<select id="getKeeperById" parameterType="int" resultType="int">
+		select userid from store where id=#{storeid} ;
+	</select>
+	<select id="storehotShop" parameterType="int" resultType="Map">
+		select proname,pt.proid proid,storeid,cover,newprice,oldprice,status
+		from product pt
+		join prostandard pd
+		on pt.proid=pd.proid
+		where storeid=#{storeid} and status='salling'
+		order by prosales DESC
+		limit 0,4
+	</select>
+	<insert id="collStoreinfo" parameterType="Collectioninfo" >
+		insert into collectioninfo(userid,typeid,sidorpid)
+		values(#{userid},#{typeid},#{sidorpid})
+	</insert>
+	<select id="checkStoreColl" parameterType="String" resultType="int">
+		select count(*) from collectioninfo where sidorpid =#{storeid}
+	</select>
+	<select id="getCollStoreInfo" resultType="Map" parameterType="int">
+		select s.*, storename from store s
+		join collectioninfo c
+		on s.id=c.sidorpid
+		where s.userid=2 and typeid=0
+	</select>
+</mapper>

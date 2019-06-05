@@ -1,0 +1,44 @@
+
+			*{padding:0;margin:0;}
+			body{
+				font-size: 0;
+			}
+			#box{
+				width: 600px;
+				height: 399px;
+				border: 10px solid #666;
+				box-shadow: 10px 10px 20px #000;
+				margin:50px auto;
+				position: relative;
+				overflow: hidden;
+			}
+			.content_img{
+				width: 3600px;
+				height: 399px;
+				position: absolute;
+				left:0;
+			}
+			.content_text{
+				position: absolute;
+				top:399px;
+				left:0;
+			}
+			.content_text div{
+				width: 600px;
+				height: 100px;
+				background: #000;
+				opacity: 0.8;
+				color:#fff;
+				position: absolute;
+				top:0;
+				left:0;
+			}
+			h1{
+				font-size: 24px;
+				text-indent: 5px;
+			}
+			p{
+				font-size: 14px;
+				margin-top: 10px;
+			}
+		

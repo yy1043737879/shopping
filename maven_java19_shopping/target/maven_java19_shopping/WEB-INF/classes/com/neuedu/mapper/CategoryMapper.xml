@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.mapper.CategoryMapper">
+<select id="getCategoryInfo" resultType="Category">
+	select *
+	from category where parentid = 0
+</select>
+<select id="getCategorySonInfo" parameterType="int" resultType="Category">
+	select *
+	from category where parentid = #{value}
+</select>
+<select id="getPropertySonInfo" parameterType="int" resultType="Property">
+	select *
+	from property where cateid = #{value}
+</select>
+	<select id="getPropertyInfo" parameterType="int" resultType="Map">
+		select *
+		from property where cateid = #{value}
+</select>
+<insert id="addProductInfo"	parameterType="Prostandard">
+	insert into prostandard(proid,standard,oldprice,newprice,stock,procolor)
+	values(#{proid},#{standard},#{oldprice},#{newprice},#{stock},#{procolor})
+</insert>
+	<insert id="addValueInfo"	parameterType="Propertyvalue">
+		insert into propertyvalue(proid,valueid,provalue)
+		values(#{proid},#{valueid},#{provalue})
+	</insert>
+	<insert id="addProductIndex" parameterType="Product">
+		insert into product(proname,cateid,storeid,cover,freight,proid)
+		values(#{proname},#{cateid},#{storeid},#{cover},#{freight},#{proid})
+	</insert>
+	<select id="getProductId" resultType="int">
+		select id
+		from prostandard
+		order by id DESC
+		limit 0,1
+	</select>
+	<select id="getOrderinfoId" resultType="Integer">
+		select id
+		from orderitem
+		order by id DESC
+		limit 0,1
+	</select>
+	<select id="getNameById" resultType="String" parameterType="int">
+		select cname
+		from category where id=#{id}
+	</select>
+	<select id="getRecommendShop" parameterType="int" resultType="Map">
+		select pt.*,newprice
+		from product pt
+		join prostandard pd
+		on pt.proid=pd.proid
+		where cateid=#{id}  and status='salling'
+
+	</select>
+	<select id="getDefaultshop"  resultType="Map">
+		select pt.*,newprice
+		from product pt
+		join prostandard pd
+		on pt.proid=pd.proid
+		where status='salling'
+		order by id DESC
+		limit 0,4
+	</select>
+<select id="getShopList" resultType="Map" parameterType="String">
+	select pt.*,newprice,standard,oldprice,stock,procolor
+		from product pt
+		join prostandard pd
+		on pt.proid=pd.proid
+		where pt.proid=#{proid} and status='salling'
+</select>
+	<select id="getHotShop" resultType="Map">
+		select * from product where status='salling'
+		order by prosales DESC
+		limit 0,4
+	</select>
+	<select id="getNewShop" resultType="Map">
+		select * from product where status='salling'
+		order by id DESC
+		limit 0,4
+	</select>
+	<insert id="addcollShop" parameterType="Collectioninfo">
+		insert into collectioninfo(userid,typeid,sidorpid)
+		values(#{userid},#{typeid},#{sidorpid})
+	</insert>
+	<select id="ckeckcollShop" parameterType="String" resultType="int">
+		select count(*) from collectioninfo where sidorpid=#{proid}
+	</select>
+	<insert id="addOrderinfo" parameterType="Orderitem">
+		insert into orderitem(orderid,proid,counts,storeid,userid)
+		values(#{orderid},#{proid},#{counts},#{storeid},#{userid})
+	</insert>
+	<select id="checkOrederShop" parameterType="String" resultType="int">
+		select count(*) from orderitem where proid=#{proid} and standarid=0
+	</select>
+	<delete id="moveShopcate" parameterType="Orderitem">
+		delete from orderitem where orderid=#{orderid}
+	</delete>
+	<select id="getPayShop" parameterType="int" resultType="Map">
+		select p.proid proid,orderid,proname,cover,counts,newprice,counts*newprice zongjia
+			from orderitem o
+			join prostandard p
+			on o.proid=p.proid
+			join product pt
+			on p.proid=pt.proid
+			where userid=#{userid} and o.standarid=0
+	</select>
+	<select id="getPaidShopInfo" parameterType="int" resultType="Map">
+		select p.proid proid,proname,cover,paydate,oin.status,counts,newprice,counts*newprice zongjia,orderid
+		from orderitem o
+		join prostandard p
+		on o.proid=p.proid
+		join product pt
+		on o.proid=pt.proid
+		join orderinfo oin
+		on oin.ordercode=o.orderid
+		where userid=#{userid} and oin.status='piad'
+	</select>
+	<select id="getCollShopInfo" parameterType="int" resultType="Map">
+		SELECT p.proid proid,proname,cover,newprice
+		FROM collectioninfo c
+		join product p
+ 		ON p.proid = c.sidorpid
+		join prostandard pd
+		 ON pd.proid = c.sidorpid
+		WHERE
+		  c.userid =#{userid}
+	</select>
+	<select id="getDoneShopInfo" parameterType="int" resultType="Map">
+		select p.proid proid,proname,cover,paydate,oin.status,counts,newprice,counts*newprice zongjia,o.orderid
+		from orderitem o
+		join prostandard p
+		on o.proid=p.proid
+		join product pt
+		on o.proid=pt.proid
+		join collectioninfo c
+		on c.sidorpid=o.proid
+		join orderinfo oin
+		on oin.ordercode=o.orderid
+		where c.userid=#{id} and oin.status='done'
+	</select>
+	<insert id="submitOrder" parameterType="Orderinfo">
+		insert into orderinfo(ordercode,username,address,post,mobile,paydate,status,message,proid)
+		values(#{ordercode},#{username},#{address},#{post},#{mobile},#{paydate},#{status},#{message},#{proid})
+	</insert>
+	<select id="getAddress" parameterType="int" resultType="Map">
+		select *
+		from addressinfo
+		where userid=#{userid}
+	</select>
+	<select id="defaultAddress" resultType="Addressinfo">
+		select * from addressinfo where defaultadd=1
+	</select>
+	<update id="updateOrderitems" parameterType="String">
+		update orderitem set standarid=1 where proid=#{proid}
+	</update>
+	<update id="updateAdress" parameterType="int">
+		update addressinfo set defaultadd=1 and id=#{id}
+	</update>
+	<select id="getAdressById" parameterType="int" resultType="Map">
+		select * from addressinfo where id=#{id}
+	</select>
+	<update id="updateAddinfo" parameterType="Addressinfo">
+		update addressinfo set userid=#{userid},address=#{address},post=#{post},username=#{username},mobile=#{mobile} where id=#{id}
+	</update>
+	<insert id="addressinfo" parameterType="Addressinfo">
+		insert into addressinfo(userid,address,post,username,mobile)
+		values(#{userid},#{address},#{post},#{username},#{mobile})
+	</insert>
+	<insert id="addFaultressinfo" parameterType="Addressinfo">
+		insert into addressinfo(userid,address,defaultadd,post,username,mobile)
+		values(#{userid},#{address},#{defaultadd},#{post},#{username},#{mobile})
+	</insert>
+	<update id="clearFaultadd">
+		UPDATE addressinfo
+		SET defaultadd = 0
+		WHERE defaultadd = 1
+	</update>
+	<delete id="deleteadress" parameterType="int">
+		delete from addressinfo where id=#{id}
+	</delete>
+	<update id="againAddDeaultadd" >
+		update addressinfo
+	</update>
+	<update id="updateShopNum" parameterType="String">
+		update product p,prostandard pd
+		set stock=stock-1,prosales=prosales+1
+		where p.proid=#{proid} and pd.proid=#{proid}
+	</update>
+	<update id="addShopNums" parameterType="Orderitem">
+		update orderitem set counts=counts+#{counts} where proid=#{proid}
+	</update>
+	<select id="getShopOrderById" parameterType="String" resultType="String">
+		select orderid from orderitem where poroid=#{proid}
+	</select>
+	<update id="receiveshop" parameterType="String">
+		update Orderinfo set status='done' where ordercode=#{orderid}
+	</update>
+	<select id="namelist" parameterType="String" resultType="Map">
+		select * from category where cname like concat('%',#{content},'%')
+	</select>
+	<select id="secondnamelist" parameterType="String" resultType="Map">
+		select * from category where cname like concat('%',#{content},'%') and parentid !=0
+	</select>
+	<select id="storelist" parameterType="String" resultType="Map">
+		select * from store where storename like concat('%',#{content},'%')
+	</select>
+	<select id="mohuShoplist" parameterType="String" resultType="Map">
+		select p.*,newprice from product p
+		join prostandard pd
+		on p.proid=pd.proid
+		where proname like  concat('%',#{content},'%') and status='salling'
+	</select>
+	<select id="secondShopById" parameterType="int" resultType="Map">
+		select p.*,newprice from product p
+		join prostandard pd
+		on p.proid=pd.proid
+		where cateid=#{id} and status='salling'
+	</select>
+	<select id="secondIdlist" parameterType="String" resultType="Integer">
+		select id from category where cname like concat('%',#{content},'%') and parentid !=0
+	</select>
+	<select id="firstIdlist" parameterType="String" resultType="Integer">
+		select id from category where cname like concat('%',#{content},'%')
+	</select>
+</mapper>
